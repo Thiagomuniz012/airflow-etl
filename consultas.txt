@@ -1,0 +1,72 @@
+Preço de Fechamento Médio por Empresa:
+
+SELECT
+    e.nome_empresa,
+    AVG(f.preco_fechamento) AS preco_fechamento_medio
+FROM
+    fato_cotacao f
+INNER JOIN
+    dim_empresa e ON f.cod_negociacao = e.cod_negociacao
+GROUP BY
+    e.nome_empresa
+ORDER BY
+    preco_fechamento_medio DESC;
+
+Volume Total Negociado por Dia:
+
+SELECT
+    d.data_pregao,
+    SUM(f.volume_total) AS volume_total_dia
+FROM
+    fato_cotacao f
+INNER JOIN
+    dim_data d ON f.data_pregao = d.data_pregao
+GROUP BY
+    d.data_pregao
+ORDER BY
+    d.data_pregao;
+
+Top 5 Empresas com Maior Volume Negociado:
+
+SELECT
+    e.nome_empresa,
+    SUM(f.volume_total) AS volume_total_empresa
+FROM
+    fato_cotacao f
+INNER JOIN
+    dim_empresa e ON f.cod_negociacao = e.cod_negociacao
+GROUP BY
+    e.nome_empresa
+ORDER BY
+    volume_total_empresa DESC
+LIMIT 5;
+
+Variação de Preço de Fechamento por Empresa:
+
+SELECT
+    e.nome_empresa,
+    MAX(f.preco_fechamento) AS preco_maximo,
+    MIN(f.preco_fechamento) AS preco_minimo,
+    (MAX(f.preco_fechamento) - MIN(f.preco_fechamento)) AS variacao
+FROM
+    fato_cotacao f
+INNER JOIN
+    dim_empresa e ON f.cod_negociacao = e.cod_negociacao
+GROUP BY
+    e.nome_empresa
+ORDER BY
+    variacao DESC;
+
+Evolução do Preço de Fechamento de uma Empresa Específica:
+
+SELECT
+    d.data_pregao,
+    f.preco_fechamento
+FROM
+    fato_cotacao f
+INNER JOIN
+    dim_data d ON f.data_pregao = d.data_pregao
+WHERE
+    f.cod_negociacao = 'CODIGO_EMPRESA'
+ORDER BY
+    d.data_pregao;
